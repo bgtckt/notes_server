@@ -9,8 +9,7 @@ function authMiddleWare (req, res, next) {
   }
   try {
     // получаем токен из заголовка запроса Authorization
-    // токен иммет вид "Bearer <token>" 
-    const token = req.headers.authorization.split(' ')[1];
+     const token = req.headers.authorization.split(' ')[1];
     // если токена нет - возвращаем сообщение об ошибке
     if (!token) {
       return res.status(401).json({message: 'Auth error'});

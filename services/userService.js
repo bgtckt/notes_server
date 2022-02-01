@@ -3,11 +3,12 @@ import bcryptjs from "bcryptjs";
 import jsonwebtoken from "jsonwebtoken";
 import config from "config";
 
+// класс для реализации бизнес-логики при работе с пользователями
 class userService {
 
   async registration(email, password) {
     const result = {};
-
+    // находим пользователя в БД по email из запроса
     const candidate = await User.findOne({email});
     // если пользователь уже существует
     if (candidate) {
@@ -31,7 +32,7 @@ class userService {
     if (!user) {
       result.errors.userNotFound = true;
     }
-    
+
     if(!result.errors.userNotFound) {
       // если пользователь найден, сравниваем пароль из запроса с паролем из БД
       const isPassValid = bcryptjs.compareSync(password, user.password);
@@ -44,6 +45,8 @@ class userService {
     if(!result.errors.userNotFound && !result.errors.invalidPass) {
       // создаем токен пользователя
       const token = jsonwebtoken.sign({id: user.id}, config.get('secretKey'), {expiresIn: '1h'});
+      
+      // записываем результат авторизации в полу user и возвращаем для дальнейшей обработки
       result.user = {
         token: token,
         user: {
@@ -61,6 +64,7 @@ class userService {
     const user = await User.findOne({_id: id});
     // перезаписываем токен, чтобы обновить срок его действия
     const token = jsonwebtoken.sign({id: user.id}, config.get('secretKey'), {expiresIn: '1h'});
+
     result.user = {
       token: token,
       user: {
