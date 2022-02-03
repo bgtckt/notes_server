@@ -10,7 +10,7 @@ class userController {
       const errors = validationResult(req);
       // если результат валидации содержит ошибки, возвращаем сообщение об ошибке
       if(!errors.isEmpty()) {
-        return res.status(400).json({message: 'Incorrect request', errors})
+        return res.status(400).json({message: 'Некорректный запрос', errors})
       }
       // получаем email и пароль из тела запроса
       const {email, password} = req.body;
@@ -18,12 +18,12 @@ class userController {
       const regResult = await userService.registration(email, password);
 
       if (regResult.isExists) {
-        return res.status(400).json({message: `User with email ${email} already exists`});
+        return res.status(400).json({message: `Пользователь с email ${email} уже существует`});
       } else {
         // сохраняем пользователя в БД
         await regResult.user.save();
         // возвращаем ответ от сервера
-        return res.json({message: 'User was created'});
+        return res.json({message: 'Вы успешно зарегистрировались!'});
       }
     } catch (error) {
       // вывод сообщения пользователю в случае ошибки
@@ -39,10 +39,10 @@ class userController {
 
       // если результат запроса содержит ошибки - вовзращаем сообщение пользователю
       if (loginResult.errors.userNotFound) {
-        return res.status(404).json({message: `User not found`});
+        return res.status(404).json({message: `Пользователь не найден`});
       }
       if (loginResult.errors.invalidPass) {
-        return res.status(404).json({message: `Invalid password`});
+        return res.status(404).json({message: `Неверный пароль`});
       }
 
       return res.json(loginResult.user);
@@ -55,9 +55,9 @@ class userController {
   async auth (req, res) {
     try {
       // получаем результат запроса на авторизацию
-      const authResult = userService.auth(req.user.id); 
+      const authResult = await userService.auth(req.user.id);
       
-      return res.json(authResult.user);
+      return res.json(authResult);
     } catch (error) {
       console.log(error);
       res.send({message: 'Server error'});

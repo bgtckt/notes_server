@@ -46,7 +46,7 @@ class userService {
       // создаем токен пользователя
       const token = jsonwebtoken.sign({id: user.id}, config.get('secretKey'), {expiresIn: '1h'});
       
-      // записываем результат авторизации в полу user и возвращаем для дальнейшей обработки
+      // записываем результат авторизации в поле user и возвращаем для дальнейшей обработки
       result.user = {
         token: token,
         user: {
@@ -59,20 +59,18 @@ class userService {
   }
 
   async auth(id) {
-    const result = {};
     // получаем пользователя по id, взятому из токена в authMiddleWare (req.user = decoded)
     const user = await User.findOne({_id: id});
     // перезаписываем токен, чтобы обновить срок его действия
     const token = jsonwebtoken.sign({id: user.id}, config.get('secretKey'), {expiresIn: '1h'});
 
-    result.user = {
+    return {
       token: token,
       user: {
         id: user.id,
         email: user.email,
       }
     };
-    return result;
   }
 }
 

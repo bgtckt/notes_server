@@ -9,7 +9,7 @@ class noteController {
       const newNote = await noteService.create(req.body, req.user.id);
       // сохраняем новую заметку в БД
       await newNote.save();
-      return res.json({message: 'Note added successfully'});
+      return res.json({message: 'Заметка добавлена'});
     } catch (error) {
       console.log(error);
       res.send({message: 'Server error'});
